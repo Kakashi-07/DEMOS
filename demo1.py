@@ -1,10 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import time
-from streamlit_chat import message
-import random
-
 
 # Set page title
 st.set_page_config(page_title="Demo Streamlit App")
