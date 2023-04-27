@@ -1,6 +1,7 @@
 # Import Required Libraries
 import os
 import streamlit as st
+pip install streamlit-chat
 from streamlit_chat import message
 from langchain.document_loaders import OnlinePDFLoader
 from langchain.text_splitter import CharacterTextSplitter
