@@ -1,7 +1,7 @@
 # Import Required Libraries
 import os
 import streamlit as st
-from streamlit_chat import message
+import streamlit_chat
 from langchain.document_loaders import OnlinePDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
