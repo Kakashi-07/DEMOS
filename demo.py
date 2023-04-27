@@ -1,179 +1,169 @@
+# Import Required Libraries
+import os
 import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import time
 from streamlit_chat import message
-import random
+from langchain.document_loaders import OnlinePDFLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import Chroma
+from langchain.chains import RetrievalQA
+from langchain.embeddings import CohereEmbeddings
+from langchain.prompts import PromptTemplate
+from langchain.llms import Cohere
+
+# Setting Up API Tokens
+# Create .streamlit Folder in Root Directory
+# Create a File secrets.toml
+# TOML format
+# cohere_apikey="Enter you Key"
 
 
-# Set page title
-st.set_page_config(page_title="Demo Streamlit App")
-
-# Create sidebar
-st.sidebar.title("Menu")
-options = [
-    "Displaying Text",
-    "Data Elements",
-    "Media Elements",
-    "Interactive Input Elements",
-    "Chart Elements",
-    "Progress and Status Elements",
-    "StreamlitChat",
-]
-choice = st.sidebar.radio("Select an option", options)
+# Setting Up Streamlit Page
+st.set_page_config(page_title="Talk With PDF", page_icon=":smile:")
 
 
-if choice == "Displaying Text":
-    st.write("Streamlit  Demo")
-    st.code("st.text()", language="python")
+# Creating Temp Folder
+if not os.path.exists("./tempfolder"):
+    os.makedirs("./tempfolder")
 
-    st.header("This is Heading 1 in Markdown")
-    st.code("st.markdown()", language="python")
 
-    st.title("This is a title")
-    st.code("st.title()", language="python")
+# tabs
+tab1, tab2 = st.tabs(["📈 Talk Here", "🗃 Relevant Documents"])
 
-    st.header("Header")
-    st.code("st.header()", language="python")
+tab1.markdown(
+    "<h1 style='text-align: center;'>Talk With PDF</h1>",
+    unsafe_allow_html=True,
+)
 
-    st.subheader("Sub Header")
-    st.code("st.subheader()", language="python")
 
-    st.latex(r"x^2 + y^2 = z^2")
-    st.code("st.latex()", language="python")
+# Saving Upload file to tempfolder
+def save_uploadedfile(uploadedfile):
+    with open(
+        os.path.join("tempfolder", uploadedfile.name),
+        "wb",
+    ) as f:
+        f.write(uploadedfile.getbuffer())
+    return st.sidebar.success("Saved File")
 
-    st.write("Streamlit can display a lot of other things too!")
-    st.code("st.write()", language="python")
 
-    st.divider()
-    st.subheader("Above is a divider")
-    st.code("st.divider()", language="python")
+# Creating Sidebar for Utilites
+with st.sidebar:
+    st.title("Upload PDF")
+    uploaded_file = st.file_uploader("Choose a file", type=["pdf"])
+    temp_r = st.slider("Temperature", 0.1, 0.9, 0.3, 0.1)
+    chunksize = st.slider("Chunk Size for Splitting Document ", 256, 1024, 300, 10)
+    clear_button = st.button("Clear Conversation", key="clear")
 
-elif choice == "Data Elements":
-    st.header("Data Elements")
-    st.subheader("DataFrame")
-    df = pd.DataFrame(
-        np.random.randn(50, 20), columns=("col %d" % i for i in range(20))
+# Initialzing Text Splitter
+text_splitter = CharacterTextSplitter(chunk_size=chunksize, chunk_overlap=10)
+
+# Intializing Cohere Embdedding
+embeddings = CohereEmbeddings(model="large", cohere_api_key=st.secrets["cohere_apikey"])
+
+
+def PDF_loader(document):
+    loader = OnlinePDFLoader(document)
+    documents = loader.load()
+    prompt_template = """ 
+    Your are an AI Chatbot devolped to help users to talk to a PDF document.Use the following pieces of context to answer the question at the end.Greet Users!!
+    {context}
+
+    {question}
+    """
+    PROMPT = PromptTemplate(
+        template=prompt_template, input_variables=["context", "question"]
     )
-    st.dataframe(df)
-
-    st.header("Metrics is also Possible")
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Temperature", "70 °F", "1.2 °F")
-    col2.metric("Wind", "9 mph", "-8%")
-    col3.metric("Humidity", "86%", "4%")
-
-    st.header("Json format")
-    st.json(
-        {
-            "foo": "bar",
-            "baz": "boz",
-            "stuff": [
-                "stuff 1",
-                "stuff 2",
-                "stuff 3",
-                "stuff 5",
-            ],
-        }
+    chain_type_kwargs = {"prompt": PROMPT}
+    texts = text_splitter.split_documents(documents)
+    global db
+    db = Chroma.from_documents(texts, embeddings)
+    retriever = db.as_retriever()
+    global qa
+    qa = RetrievalQA.from_chain_type(
+        llm=Cohere(
+            model="command-xlarge-nightly",
+            temperature=temp_r,
+            cohere_api_key=st.secrets["cohere_apikey"],
+        ),
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True,
+        chain_type_kwargs=chain_type_kwargs,
     )
-elif choice == "Media Elements":
-    st.header("Media Elements")
-    st.subheader("Image")
-    st.image(
-        "https://images.unsplash.com/photo-1579353977828-2a4eab540b9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2FtcGxlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-        caption="This is an example image.",
-        use_column_width=True,
-    )
-
-    st.subheader("This is Youtube Video")
-    st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    return "Ready"
 
 
-elif choice == "Interactive Input Elements":
-    st.header("Interactive Input Elements")
-    name = st.text_input("Enter your name", "I didn't Know")
-    st.write("Hello, " + name + "!")
-
-    A = st.button("Click here")
-    if A:
-        st.write("You Clicked It")
-    st.checkbox("Check this")
-    st.radio("Radio", [1, 2, 3])
-    st.selectbox("Select", [1, 2, 3])
-    st.multiselect("Multiple selection", [21, 85, 53])
-    st.slider("Slide", min_value=10, max_value=20)
-    st.select_slider("Slide to select", options=[1, 2, 3, 4])
-    st.text_input("Enter some text")
-    st.number_input("Enter a number")
-    st.date_input("Date input")
-    st.time_input("Time input")
-    st.file_uploader("File uploader")
-    st.color_picker("Color Picker")
-
-elif choice == "Chart Elements":
-    st.header("Chart Elements")
-
-    st.header("Line Chart")
-    df = pd.DataFrame({"x": [1, 2, 3], "y": [10, 20, 30]})
-    st.line_chart(df)
-
-    st.header("Plotly ")
-
-    df = px.data.gapminder()
-
-    fig = px.scatter(
-        df.query("year==2007"),
-        x="gdpPercap",
-        y="lifeExp",
-        size="pop",
-        color="continent",
-        hover_name="country",
-        log_x=True,
-        size_max=60,
+if uploaded_file is not None:
+    save_uploadedfile(uploaded_file)
+    PDF_loader("tempfolder/" + uploaded_file.name)
+    tab1.markdown(
+        "<h3 style='text-align: center;'>Now You Are Talking With "
+        + uploaded_file.name
+        + "</h3>",
+        unsafe_allow_html=True,
     )
 
-    tab1, tab2 = st.tabs(["Streamlit theme (default)", "Plotly native theme"])
-    st.write("Tabs are Supported WoW!!")
-    with tab1:
-        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
-    with tab2:
-        st.plotly_chart(fig, theme=None, use_container_width=True)
+# Session State
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+if "generated" not in st.session_state:
+    st.session_state["generated"] = []
+if "past" not in st.session_state:
+    st.session_state["past"] = []
 
-    st.header("Map")
 
-    df = pd.DataFrame(
-        np.random.randn(100, 2) / [50, 50] + [11.016844, 76.955833],
-        columns=["lat", "lon"],
+# Generating Response
+def generate_response(query):
+    result = qa({"query": query, "chat_history": st.session_state["chat_history"]})
+
+    tab2.markdown(
+        "<h3 style='text-align: center;'>Relevant Documents Metadata</h3>",
+        unsafe_allow_html=True,
     )
 
-    st.map(df)
+    tab2.write(result["source_documents"])
+    result["result"] = result["result"]
+    return result["result"]
 
 
-elif choice == "Progress and Status Elements":
-    my_bar = st.progress(0)
-    for percent_complete in range(100):
-        time.sleep(0.01)
-        my_bar.progress(percent_complete + 1)
-    st.spinner()
-    with st.spinner(text="This is Spinning"):
-        time.sleep(2)
-        st.success("Done")
-    st.balloons()
-    st.error("Error message")
-    st.warning("Warning message")
-    st.info("Info message")
-    st.success("Success message")
-    e = RuntimeError("This is an exception of type RuntimeError which never Happended")
-    st.exception(e)
+# Creating Containers
 
-elif choice == "StreamlitChat":
-    # accept input from user
-    user_input = st.text_input("You:", key="input")
-    if user_input:
-        message(f"You: {user_input}", is_user=True)
-        random_number = random.randint(0, 100)
-        message(
-            f"Bot: Hi there! I think You Lucky Number is {random_number}", is_user=False
-        )
+response_container = tab1.container()
+container = tab1.container()
+
+
+with container:
+    with st.form(key="my_form", clear_on_submit=True):
+        user_input = st.text_input("You:", key="input")
+        submit_button = st.form_submit_button(label="Send")
+
+    if user_input and submit_button:
+        if uploaded_file is not None:
+            output = generate_response(user_input)
+            print(output)
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(output)
+            st.session_state["chat_history"] = [(user_input, output)]
+        else:
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(
+                "Please go ahead and upload the PDF in the sidebar, it would be great to have it there."
+            )
+
+if st.session_state["generated"]:
+    with response_container:
+        for i in range(len(st.session_state["generated"])):
+            message(
+                st.session_state["past"][i],
+                is_user=True,
+                key=str(i) + "_user",
+                avatar_style="adventurer",
+                seed=123,
+            )
+            message(st.session_state["generated"][i], key=str(i))
+
+# Enabling Clear button
+
+if clear_button:
+    st.session_state["generated"] = []
+    st.session_state["past"] = []
+    st.session_state["chat_history"] = []
