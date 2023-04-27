@@ -1,44 +1,37 @@
 import streamlit as st
 
-# Set page title
-st.set_page_config(page_title="Demo Streamlit App")
+st.set_page_config(page_title="Endangered Bird Voice Identifier")
 
-# Create sidebar
-st.sidebar.title("Menu")
+st.sidebar.title("SeLeCt YoUr ChOiCe")
 options = [
-    "Displaying Text",
-    "Data Elements",
-    "Media Elements",
-    "Interactive Input Elements",
-    "Chart Elements",
-    "Progress and Status Elements",
-    "StreamlitChat",
+    "Image Recognition",
+    "Audio Recognition",
 ]
-choice = st.sidebar.radio("Select an option", options)
 
+choice = st.sidebar.radio("Select the method you want", options)
 
-if choice == "Displaying Text":
-    st.write("Streamlit  Demo")
-    st.code("st.text()", language="python")
-
-    st.header("This is Heading 1 in Markdown")
-    st.code("st.markdown()", language="python")
-
-    st.title("This is a title")
-    st.code("st.title()", language="python")
-
-    st.header("Header")
-    st.code("st.header()", language="python")
-
-    st.subheader("Sub Header")
-    st.code("st.subheader()", language="python")
-
-    st.latex(r"x^2 + y^2 = z^2")
-    st.code("st.latex()", language="python")
-
-    st.write("Streamlit can display a lot of other things too!")
-    st.code("st.write()", language="python")
-
-    st.divider()
-    st.subheader("Above is a divider")
-    st.code("st.divider()", language="python")
+if choice == "Image Recognition":
+   Uploaded_file =  st.file_uploader("Upload the Image File", type = ["jpg", "png"])    
+    if Uploaded_file is None:
+        st.header(" File format not supported!! ")
+    
+   st.image(Uploaded_file, caption ='YOUR IMAGE')
+   
+elif choice == "Audio Recognition":
+   Uploaded_file =  st.file_uploader("Upload the Image File", type = ["mp3", "wav"])    
+    if Uploaded_file is None:
+        st.header(" File format not supported!! ")
+        
+   audio_bytes = Uploaded_file.read() 
+   st.audio(Uploaded_file)
+   sample_rate = 44100  # 44100 samples per second
+   seconds = 2  # Note duration of 2 seconds
+   frequency_la = 440  # Our played note will be 440 Hz
+   # Generate array with seconds*sample_rate steps, ranging between 0 and seconds
+   t = np.linspace(0, seconds, seconds * sample_rate, False)
+   # Generate a 440 Hz sine wave
+   note_la = np.sin(frequency_la * t * 2 * np.pi)
+   st.audio(note_la, sample_rate=sample_rate)
+    
+    
+ 
