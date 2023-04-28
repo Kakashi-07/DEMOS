@@ -31,7 +31,7 @@ model = VGG16(weights='imagenet')
 
 img = Uploaded_file
 #img = cv2.resize(img,(224, 224))
-img = transform.resize(img, (256, 256))
+#img = transform.resize(img, (256, 256))
 x = np.array(img)
 x = np.expand_dims(x, axis=0)
 x = preprocess_input(x)
