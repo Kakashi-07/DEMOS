@@ -79,6 +79,7 @@ def Img_DataGen(Input):
   input_variables=["history", "human_input"], 
   template=var)
 
+  global chat_chain
   chat_chain = LLMChain(
   llm = Cohere(cohere_api_key= COHERE_API_KEY, model="command-xlarge-nightly"), 
   prompt=prompt, 
