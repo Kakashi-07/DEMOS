@@ -23,7 +23,7 @@ with tab1:
     
 with tab2:
    if uploaded_file is not None:
-    st.image(image, caption='Uploaded Image.', use_column_width=True)
+    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
 
 if not os.path.exists("./tempfolder"):
     os.makedirs("./tempfolder")
