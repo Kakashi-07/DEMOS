@@ -1,3 +1,4 @@
+scikit-image
 tensorflow
 chromadb
 langchain
