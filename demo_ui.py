@@ -12,7 +12,7 @@ st.markdown("<h1 style='text-align: center; color: orange;'>CHIRP CHAT 🐥 </h1
 
 tab1, tab2 = st.tabs(["CHAT HERE 💬", " Uploaded Documents 📄"])
 
-with st.tab1:
+with tab1:
     user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
 
 if not os.path.exists("./tempfolder"):
