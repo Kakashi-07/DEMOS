@@ -27,7 +27,7 @@ with tab2:
 
 #CLASSIFICATION
 model = VGG16(weights='imagenet')
-img = Uploaded_file
+img = uploaded_file
 x = np.array(img)
 x = np.expand_dims(x, axis=0)
 x = preprocess_input(x)
