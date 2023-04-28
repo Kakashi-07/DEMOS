@@ -25,7 +25,6 @@ with tab1:
     
 with tab2:
    if uploaded_file is not None:
-    st.image(uploaded_file, caption='Uploaded Image.')
     uploaded_image = Image.open(uploaded_file)
     x = preprocess_input(np.array(uploaded_image))
     model = VGG16(weights='imagenet')
@@ -37,3 +36,4 @@ with tab2:
     decoded_preds = decode_predictions(preds, top=1)[0]
     for pred in decoded_preds:
       result = pred[1]
+    st.image(uploaded_file, caption=result)
