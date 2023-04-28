@@ -24,7 +24,9 @@ if choice == "Image Recognition":
     if Uploaded_file is None:
         st.header(" File format not supported!! ")
     st.image(Uploaded_file, caption='YOUR IMAGE')
-
+    
+user_input = st.text_input("You:", key="input")
+    
 model = VGG16(weights='imagenet')
 
 img = Uploaded_file
@@ -104,8 +106,6 @@ if "generated" not in st.session_state:
     st.session_state["generated"] = []
 if "past" not in st.session_state:
     st.session_state["past"] = []
-    
-user_input = st.text_input("You:", key="input")
 
 # Generating Response
 def generate_response(query):
