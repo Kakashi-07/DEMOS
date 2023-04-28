@@ -24,10 +24,9 @@ with tab1:
     
 with tab2:
    if uploaded_file is not None:
-    st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+    st.image(uploaded_file, caption='Uploaded Image.')
     model = VGG16(weights='imagenet')
     img = uploaded_file
     x = np.array(img)
     x = np.expand_dims(x, axis=0)
     preds = model.predict(x)
-   
