@@ -1,11 +1,6 @@
-scikit-image
-tensorflow
-chromadb
-langchain
-unstructured
-unstructured[local-inference]
-gradio
 streamlit
-streamlit-chat
+keras
+tensorflow
+pillow
 cohere
-opencv-python-headless
+langchain
