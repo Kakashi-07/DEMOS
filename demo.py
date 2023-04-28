@@ -38,11 +38,11 @@ elif choice == "Audio Recognition":
     note_la = np.sin(frequency_la * t * 2 * np.pi)
     st.audio(note_la, sample_rate=sample_rate)
     
-def PDF_loader(document):
-    loader = OnlinePDFLoader(document)
+def Img_loader(document):
+    loader = UnstructuredImageLoader(document)
     documents = loader.load()
     prompt_template = """ 
-    Your are an AI Chatbot devolped to help users to talk to a PDF document.Use the following pieces of context to answer the question at the end.Greet Users!!
+    Your are an AI Chatbot devolped to help users to identify the Endangered birds by its voice or image.Use the following pieces of context to answer the question at the end.Greet Users!!
     {context}
     {question}
     """
