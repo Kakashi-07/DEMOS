@@ -1,5 +1,5 @@
 import streamlit as st
-import os
+from keras.applications.vgg16 import preprocess_input, decode_predictions, VGG16
 
 st.set_page_config(page_title="CHIRP CHAT",
                   page_icon="🐥",
@@ -24,15 +24,4 @@ with tab1:
 with tab2:
    if uploaded_file is not None:
     st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
-
-if not os.path.exists("./tempfolder"):
-    os.makedirs("./tempfolder")
-    
-def save_uploadedfile(uploadedfile):
-    with open(
-        os.path.join("tempfolder", uploadedfile.name),
-        "wb",
-    ) as f:
-        f.write(uploadedfile.getbuffer())
-    return st.sidebar.success("Saved File")
-    
+  
