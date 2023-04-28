@@ -109,7 +109,7 @@ with container:
         else:
             st.session_state["past"].append(user_input)
             st.session_state["generated"].append(
-                ""Hey, you there! Dont be a bird-brain and upload a picture of a birdie in the sidebar."
+                "Hey, you there! Don't be a bird-brain and upload a picture of a birdie in the sidebar."
             )
 
 if st.session_state["generated"]:
