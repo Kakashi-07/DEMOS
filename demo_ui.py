@@ -1,5 +1,6 @@
 import numpy as np
 import streamlit as st
+from PIL import Image
 from keras.applications.vgg16 import preprocess_input, decode_predictions, VGG16
 
 st.set_page_config(page_title="CHIRP CHAT",
@@ -25,8 +26,10 @@ with tab1:
 with tab2:
    if uploaded_file is not None:
     st.image(uploaded_file, caption='Uploaded Image.')
+    uploaded_image = Image.open(uploaded_file)
+    preprocessed_image = preprocess_input(np.array(uploaded_image))
     model = VGG16(weights='imagenet')
-    img = uploaded_file
-    x = np.array(img)
-    x = np.expand_dims(x, axis=0)
+    #img = uploaded_file
+    #x = np.array(img)
+    #x = np.expand_dims(x, axis=0)
     preds = model.predict(x)
