@@ -1,14 +1,24 @@
+import cv2
+import numpy as np
 import streamlit as st
-from langchain.document_loaders.image import UnstructuredImageLoader
-from langchain.vectorstores import Chroma
-from langchain.prompts import PromptTemplate
+import tensorflow as tf
+from langchain import Cohere, ConversationChain, LLMChain, PromptTemplate
+from langchain.memory import ConversationBufferWindowMemory
+from keras.preprocessing import image
+from keras.applications.vgg16 import preprocess_input, decode_predictions, VGG16
 
 st.set_page_config(page_title="Endangered Bird Voice Identifier")
+
+tab1= st.tabs(["📈 Talk Here"])
+
+tab1.markdown(
+    "<h1 style='text-align: center;'>Talk With Chatbot</h1>",
+    unsafe_allow_html=True,
+)
 
 st.sidebar.title("SeLeCt YoUr ChOiCe")
 options = [
     "Image Recognition",
-    "Audio Recognition",
 ]
 
 choice = st.sidebar.radio("Select the method you want", options)
@@ -18,52 +28,122 @@ if choice == "Image Recognition":
         "Upload the Image File", type=["jpg", "png"])
     if Uploaded_file is None:
         st.header(" File format not supported!! ")
-
     st.image(Uploaded_file, caption='YOUR IMAGE')
 
-elif choice == "Audio Recognition":
-    Uploaded_file = st.file_uploader(
-        "Upload the Image File", type=["mp3", "wav"])
-    if Uploaded_file is None:
-        st.header(" File format not supported!! ")
+model = VGG16(weights='imagenet')
 
-    audio_bytes = Uploaded_file.read()
-    st.audio(Uploaded_file)
-    sample_rate = 44100  # 44100 samples per second
-    seconds = 2  # Note duration of 2 seconds
-    frequency_la = 440  # Our played note will be 440 Hz
-    # Generate array with seconds*sample_rate steps, ranging between 0 and seconds
-    t = np.linspace(0, seconds, seconds * sample_rate, False)
-    # Generate a 440 Hz sine wave
-    note_la = np.sin(frequency_la * t * 2 * np.pi)
-    st.audio(note_la, sample_rate=sample_rate)
+img = Uploaded_file
+img = cv2.resize(img,(224, 224))
+x = np.array(img)
+x = np.expand_dims(x, axis=0)
+x = preprocess_input(x)
+
+# Make predictions
+preds = model.predict(x)
+
+# Decode the predictions
+decoded_preds = decode_predictions(preds, top=1)[0]
+print('Predictions:')
+for pred in decoded_preds:
+     result = pred[1]
+     st.subheader(result)
     
-def Img_loader(document):
-    loader = UnstructuredImageLoader(document)
-    documents = loader.load()
-    prompt_template = """ 
-    Your are an AI Chatbot devolped to help users to identify the Endangered birds by its voice or image.Use the following pieces of context to answer the question at the end.Greet Users!!
-    {context}
-    {question}
-    """
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
+def Img_DataGen(Input):
+    template = """
+    You are an AI Chatbot developed solely to help users to talk about Birds and their information.
+    
+    {history}
+    Human: {human_input}
+    Assistant:"""
+
+    prompt1 = PromptTemplate(
+    input_variables=["product"],
+    template="Generate a paragraph about {product} as if an Ornithologist is saying it.",
     )
-    chain_type_kwargs = {"prompt": PROMPT}
-    texts = text_splitter.split_documents(documents)
-    global db
-    db = Chroma.from_documents(texts, embeddings)
-    retriever = db.as_retriever()
-    global qa
-    qa = RetrievalQA.from_chain_type(
-        llm=Cohere(
-            model="command-xlarge-nightly",
-            temperature=temp_r,
-            cohere_api_key=st.secrets["cohere_apikey"],
-        ),
-        chain_type="stuff",
-        retriever=retriever,
-        return_source_documents=True,
-        chain_type_kwargs=chain_type_kwargs,
+    chain = LLMChain(llm=LLM, prompt=prompt1)
+    var = chain.run(result)
+    
+    template = """
+        You are an AI Chatbot who acts as a professional Ornithologist. You are designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions. As a language model, you must be able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
+        Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
+        Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.
+        your task is answer any question asked about {result}. some basic info on {result} is: {var}
+        """
+
+    prompt = PromptTemplate(
+    input_variables=["result","var"], 
+    template=template
+    )
+    
+    var = var + """{history}
+    Human: {human_input}
+    Assistant:"""
+
+    var = prompt.format(result=result, var = var)
+    
+    global chat
+    prompt = PromptTemplate(
+    input_variables=["history", "human_input"], 
+    template=var
+    )
+
+    chat_chain = LLMChain(
+    llm = Cohere(cohere_api_key= st.secrets["cohere_apikey"], model="command-xlarge-nightly"), 
+    prompt=prompt, 
+    verbose=True, 
+    memory=ConversationBufferWindowMemory(k=8),
+    )
     )
     return "Ready"
+
+if Uploaded_file is not None:
+    save_uploadedfile(Uploaded_file)
+    Img_DataGen(result)
+    )
+
+ # Session State
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+if "generated" not in st.session_state:
+    st.session_state["generated"] = []
+if "past" not in st.session_state:
+    st.session_state["past"] = []
+    
+user_input = st.text_input("You:", key="input")
+
+# Generating Response
+def generate_response(query):
+    query = user_input
+    if user_input:
+        res = chat.predict(human_input = query)
+        res = chat({"query": query, "chat_history": st.session_state["chat_history"]})
+        res["res"] = res["res"]
+        return res["res"]
+
+
+response_container = tab1.container()
+container = tab1.container()
+
+
+with container:
+    with st.form(key="my_form", clear_on_submit=True):
+        user_input = st.text_input("You:", key="input")
+        submit_button = st.form_submit_button(label="Send")
+
+    if user_input and submit_button:
+        if uploaded_file is not None:
+            output = generate_response(user_input)
+            print(output)
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(output)
+            st.session_state["chat_history"] = [(user_input, output)]
+        else:
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(
+                "Please upload the picture!"
+            )
+
+if clear_button:
+    st.session_state["generated"] = []
+    st.session_state["past"] = []
+    st.session_state["chat_history"] = []
