@@ -20,10 +20,10 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
     clear_button = st.button("Clear Conversation", key="clear")
 
- if uploaded_file is not None:
-    save_uploadedfile(uploaded_file)
-    PDF_loader("tempfolder/" + uploaded_file.name)
-    tab1.markdown(
+if uploaded_file is not None:
+  save_uploadedfile(uploaded_file)
+  PDF_loader("tempfolder/" + uploaded_file.name)
+  tab1.markdown(
         "<h3 style='text-align: center;'>Now You Are Talking With "
         + uploaded_file.name
         + "</h3>",
