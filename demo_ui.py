@@ -1,5 +1,9 @@
 import streamlit as st
+import os
 
+if not os.path.exists("./tempfolder"):
+    os.makedirs("./tempfolder")
+    
 st.set_page_config(page_title="CHIRP CHAT",
                   page_icon="🐥",
                   layout="wide",
@@ -12,3 +16,4 @@ st.markdown("<h1 style='text-align: center; color: orange;'>CHIRP CHAT 🐥 </h1
 tab1, tab2 = st.tabs(["CHAT HERE 💬", " Uploaded Documents 📄"])
 
 user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
+
