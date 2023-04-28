@@ -7,7 +7,7 @@ st.set_page_config(page_title="CHIRP CHAT",
 
 #st.title(':orange[CHIRP CHAT]')
 #st.markdown("<h1 style='text-align: center;'>:orange[CHIRP CHAT]</h1>", unsafe_allow_html=True,)
-st.markdown("<h1 style='text-align: center; color: orange;'>CHIRP CHAT :hatched_chick: </h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: orange;'>CHIRP CHAT </h1> :hatched_chick: ", unsafe_allow_html=True)
 
 tab1, tab2 = st.tabs(["CHAT HERE 💬", " Uploaded Documents 📄"])
 
