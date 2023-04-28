@@ -27,7 +27,7 @@ with tab2:
    if uploaded_file is not None:
     st.image(uploaded_file, caption='Uploaded Image.')
     uploaded_image = Image.open(uploaded_file)
-    preprocessed_image = preprocess_input(np.array(uploaded_image))
+    x = preprocess_input(np.array(uploaded_image))
     model = VGG16(weights='imagenet')
     #img = uploaded_file
     #x = np.array(img)
