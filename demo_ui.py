@@ -20,9 +20,19 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
     clear_button = st.button("Clear Conversation", key="clear")
 
+ if uploaded_file is not None:
+    save_uploadedfile(uploaded_file)
+    PDF_loader("tempfolder/" + uploaded_file.name)
+    tab1.markdown(
+        "<h3 style='text-align: center;'>Now You Are Talking With "
+        + uploaded_file.name
+        + "</h3>",
+        unsafe_allow_html=True,
+    )   
+    
 with tab1:
     user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
-    
+     
 with tab2:
    if uploaded_file is not None:
     uploaded_image = Image.open(uploaded_file)
@@ -37,3 +47,12 @@ with tab2:
     for pred in decoded_preds:
       result = pred[1]
     st.image(uploaded_file, caption=result)
+    
+ with tab1:   
+    if uploaded_file is not None:
+      tab1.markdown(
+        "<h3 style='text-align: center;'>Now you're chirping about the bird "
+        + result
+        + "</h3>",
+        unsafe_allow_html=True,
+    )  
