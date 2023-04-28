@@ -1,3 +1,4 @@
+cv2
 tensorflow
 chromadb
 langchain
@@ -7,4 +8,3 @@ gradio
 streamlit
 streamlit-chat
 cohere
-cv2
