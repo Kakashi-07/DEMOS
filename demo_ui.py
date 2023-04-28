@@ -49,10 +49,8 @@ with tab2:
     st.image(uploaded_file, caption=result)
     
 with tab1:
-   if uploaded_file is not None:
-    tab1.markdown(
-        "<h3 style='text-align: center;'>Now you're chirping about the bird "
+  if uploaded_file is not None:
+    tab1.markdown("<h3 style='text-align: center;'>Now you're chirping about the bird "
         + result
         + "</h3>",
-        unsafe_allow_html=True,
-        )  
+        unsafe_allow_html=True,)
