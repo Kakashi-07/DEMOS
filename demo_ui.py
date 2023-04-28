@@ -23,8 +23,8 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
     clear_button = st.button("Clear Conversation", key="clear") 
     
-with tab1:
-    user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
+#with tab1:
+    #user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
      
 with tab2:
    if uploaded_file is not None:
@@ -86,6 +86,47 @@ if "generated" not in st.session_state:
     st.session_state["generated"] = []
 if "past" not in st.session_state:
     st.session_state["past"] = []
-  wed  
+   
 def generate_response(query):
     result = chat_chain({"query": query})
+
+# Creating Containers
+response_container = tab1.container()
+container = tab1.container()
+
+with container:
+    with st.form(key="my_form", clear_on_submit=True):
+        user_input = st.text_input("You:", key="input")
+        submit_button = st.form_submit_button(label="Send")
+
+    if user_input and submit_button:
+        if uploaded_file is not None:
+            output = generate_response(user_input)
+            print(output)
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(output)
+            st.session_state["chat_history"] = [(user_input, output)]
+        else:
+            st.session_state["past"].append(user_input)
+            st.session_state["generated"].append(
+                ""Hey, you there! Dont be a bird-brain and upload a picture of a birdie in the sidebar."
+            )
+
+if st.session_state["generated"]:
+    with response_container:
+        for i in range(len(st.session_state["generated"])):
+            message(
+                st.session_state["past"][i],
+                is_user=True,
+                key=str(i) + "_user",
+                avatar_style="adventurer",
+                seed=123,
+            )
+            message(st.session_state["generated"][i], key=str(i))
+
+# Enabling Clear button
+
+if clear_button:
+    st.session_state["generated"] = []
+    st.session_state["past"] = []
+    st.session_state["chat_history"] = []
