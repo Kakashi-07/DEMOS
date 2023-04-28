@@ -44,3 +44,4 @@ with tab1:
         + result
         + "</h3>",
         unsafe_allow_html=True,)
+
