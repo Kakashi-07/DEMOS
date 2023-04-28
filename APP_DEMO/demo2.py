@@ -93,7 +93,7 @@ def Img_DataGen(Input):
     verbose=True, 
     memory=ConversationBufferWindowMemory(k=8),
     )
-    )
+    
     return "Ready"
 
 if Uploaded_file is not None:
