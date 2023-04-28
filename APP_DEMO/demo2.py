@@ -11,11 +11,6 @@ st.set_page_config(page_title="Endangered Bird Voice Identifier")
 
 tab1= st.tabs(["📈 Talk Here"])
 
-tab1.markdown(
-    "<h1 style='text-align: center;'>Talk With Chatbot</h1>",
-    unsafe_allow_html=True,
-)
-
 st.sidebar.title("SeLeCt YoUr ChOiCe")
 options = [
     "Image Recognition",
