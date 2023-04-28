@@ -33,3 +33,7 @@ with tab2:
     #x = np.array(img)
     x = np.expand_dims(x, axis=0)
     preds = model.predict(x)
+    
+    decoded_preds = decode_predictions(preds, top=1)[0]
+    for pred in decoded_preds:
+      result = pred[1]
