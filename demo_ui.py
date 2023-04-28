@@ -4,6 +4,21 @@ import os
 if not os.path.exists("./tempfolder"):
     os.makedirs("./tempfolder")
     
+def save_uploadedfile(uploadedfile):
+    with open(
+        os.path.join("tempfolder", uploadedfile.name),
+        "wb",
+    ) as f:
+        f.write(uploadedfile.getbuffer())
+    return st.sidebar.success("Saved File")
+
+
+# Creating Sidebar for Utilites
+with st.sidebar:
+    st.title("Upload Your Birdie")
+    uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
+    clear_button = st.button("Clear Conversation", key="clear")
+
 st.set_page_config(page_title="CHIRP CHAT",
                   page_icon="🐥",
                   layout="wide",
