@@ -78,3 +78,14 @@ def Img_DataGen(Input):
   memory=ConversationBufferWindowMemory(k=8)
   )
   return "Ready"
+
+# Session State
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
+if "generated" not in st.session_state:
+    st.session_state["generated"] = []
+if "past" not in st.session_state:
+    st.session_state["past"] = []
+    
+def generate_response(query):
+    result = chat_chain({"query": query})
