@@ -48,3 +48,33 @@ with tab1:
         + "</h3>",
         unsafe_allow_html=True,)
 
+def Img_DataGen(Input):
+  cohere_api_key= st.secrets["cohere_apikey"]
+  LLM = Cohere(cohere_api_key=cohere_api_key , model="command-xlarge-nightly")
+  
+  prompt1 = PromptTemplate(
+  input_variables=["product"],
+  template="Generate a paragraph about {product} as if an Ornithologist is saying it.")
+  chain = LLMChain(llm=LLM, prompt=prompt1)
+  var = chain.run(result)
+  
+  prompt = PromptTemplate(
+  input_variables=["result","var"], 
+  template=template)
+  var = prompt.format(result=result, var = var)
+  
+  var = var + """{history}
+  Human: {human_input}
+  Assistant:"""
+  
+  prompt = PromptTemplate(
+  input_variables=["history", "human_input"], 
+  template=var)
+
+  chat_chain = LLMChain(
+  llm = Cohere(cohere_api_key= COHERE_API_KEY, model="command-xlarge-nightly"), 
+  prompt=prompt, 
+  verbose=True, 
+  memory=ConversationBufferWindowMemory(k=8)
+  )
+  return "Ready"
