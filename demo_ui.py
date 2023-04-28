@@ -12,6 +12,12 @@ st.markdown("<h1 style='text-align: center; color: orange;'>CHIRP CHAT 🐥 </h1
 
 tab1, tab2 = st.tabs(["CHAT HERE 💬", " Uploaded Documents 📄"])
 
+# Creating Sidebar for Utilites
+with st.sidebar:
+    st.title("Upload Your Birdie")
+    uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
+    clear_button = st.button("Clear Conversation", key="clear")
+
 with tab1:
     user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
     
@@ -29,11 +35,4 @@ def save_uploadedfile(uploadedfile):
     ) as f:
         f.write(uploadedfile.getbuffer())
     return st.sidebar.success("Saved File")
-
-
-# Creating Sidebar for Utilites
-with st.sidebar:
-    st.title("Upload Your Birdie")
-    uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg"])
-    clear_button = st.button("Clear Conversation", key="clear")
     
