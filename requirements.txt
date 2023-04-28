@@ -1,8 +1,0 @@
-chromadb
-langchain
-unstructured
-unstructured[local-inference]
-gradio
-streamlit
-streamlit-chat
-cohere
