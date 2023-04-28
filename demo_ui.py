@@ -30,7 +30,7 @@ with tab2:
 model = VGG16(weights='imagenet')
 img = uploaded_file
 x = np.array(img)
-x = np.expand_dims(x, axis=0)
+#x = np.expand_dims(x, axis=0)
 
 # Make predictions
 preds = model.predict(x)
