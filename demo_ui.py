@@ -5,4 +5,5 @@ st.set_page_config(page_title="CHIRP CHAT",
                   layout="wide",
                   initial_sidebar_state="expanded")
 
-st.markdown("<p style='color:green'>Howdy! Type in your bird-brained questions here!</p>", unsafe_allow_html=True)
+st.title('orange[CHIRP CHAT]')
+user_input = st.text_area(label=":green[Welcome to CHIRP CHAT! Type in your bird-brained questions]")
