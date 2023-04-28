@@ -1,3 +1,4 @@
+import numpy as np
 import streamlit as st
 from keras.applications.vgg16 import preprocess_input, decode_predictions, VGG16
 
