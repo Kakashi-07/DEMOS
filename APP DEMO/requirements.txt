@@ -1,3 +1,4 @@
+tensorflow
 chromadb
 langchain
 unstructured
