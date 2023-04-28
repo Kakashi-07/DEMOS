@@ -2,3 +2,5 @@ streamlit
 keras
 tensorflow
 pillow
+cohere
+langchain
