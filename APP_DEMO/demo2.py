@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import streamlit as st
 import tensorflow as tf
+from skimage import transform
 from langchain import Cohere, ConversationChain, LLMChain, PromptTemplate
 from langchain.memory import ConversationBufferWindowMemory
 from keras.preprocessing import image
@@ -33,7 +34,8 @@ if choice == "Image Recognition":
 model = VGG16(weights='imagenet')
 
 img = Uploaded_file
-img = cv2.resize(img,(224, 224))
+#img = cv2.resize(img,(224, 224))
+img = transform.resize(img, (256, 256))
 x = np.array(img)
 x = np.expand_dims(x, axis=0)
 x = preprocess_input(x)
