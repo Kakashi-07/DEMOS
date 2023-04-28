@@ -99,7 +99,7 @@ def Img_DataGen(Input):
 if Uploaded_file is not None:
     save_uploadedfile(Uploaded_file)
     Img_DataGen(result)
-    )
+    
 
  # Session State
 if "chat_history" not in st.session_state:
