@@ -24,4 +24,19 @@ with tab1:
 with tab2:
    if uploaded_file is not None:
     st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
-  
+
+#CLASSIFICATION
+model = VGG16(weights='imagenet')
+img = Uploaded_file
+x = np.array(img)
+x = np.expand_dims(x, axis=0)
+x = preprocess_input(x)
+
+# Make predictions
+preds = model.predict(x)
+
+# Decode the predictions
+decoded_preds = decode_predictions(preds, top=1)[0]
+print('Predictions:')
+for pred in decoded_preds:
+     result = pred[1]
