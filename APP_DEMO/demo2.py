@@ -34,7 +34,7 @@ img = Uploaded_file
 #img = transform.resize(img, (256, 256))
 x = np.array(img)
 x = np.expand_dims(x, axis=0)
-x = preprocess_input(x)
+#x = preprocess_input(x)
 
 # Make predictions
 preds = model.predict(x)
