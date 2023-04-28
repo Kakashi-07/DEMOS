@@ -34,10 +34,3 @@ x = np.expand_dims(x, axis=0)
 
 # Make predictions
 preds = model.predict(x)
-
-# Decode the predictions
-decoded_preds = decode_predictions(preds, top=1)[0]
-print('Predictions:')
-for pred in decoded_preds:
-     result = pred[1]
-     print(result)
