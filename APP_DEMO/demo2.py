@@ -83,7 +83,6 @@ prompt=prompt,
 verbose=True, 
 memory=ConversationBufferWindowMemory(k=8)
 )
-return "Ready"
 
 # Session State
 if "chat_history" not in st.session_state:
