@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image
 import streamlit as st
 import tensorflow as tf
+from streamlit_chat import message
 from langchain.memory import ConversationBufferWindowMemory
 from langchain import Cohere, ConversationChain, LLMChain, PromptTemplate
 from keras.applications.vgg16 import preprocess_input, decode_predictions, VGG16
