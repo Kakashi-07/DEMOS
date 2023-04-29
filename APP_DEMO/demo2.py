@@ -77,7 +77,7 @@ template=var)
 
 global chat_chain
 chat_chain = LLMChain(
-llm = Cohere(cohere_api_key= COHERE_API_KEY, model="command-xlarge-nightly"), 
+llm = Cohere(cohere_api_key= cohere_api_key, model="command-xlarge-nightly"), 
 prompt=prompt, 
 verbose=True, 
 memory=ConversationBufferWindowMemory(k=8)
