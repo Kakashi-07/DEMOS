@@ -92,7 +92,7 @@ if "past" not in st.session_state:
     st.session_state["past"] = []
    
 def generate_response(query):
-    resu = chat_chain({"query": query})
+    resu = chat_chain({"human_input": query})
 
 # Creating Containers
 response_container = tab1.container()
