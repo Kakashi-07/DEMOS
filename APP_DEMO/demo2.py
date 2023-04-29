@@ -49,7 +49,7 @@ with tab1:
         unsafe_allow_html=True,)
 
 def Img_DataGen(Input):
-  cohere_api_key= st.secrets["cohere_apikey"]
+  cohere_api_key= "kDWTfFn3bcbnIcfbW4X6u7WyCxr3yHjAmFeRnUcT"
   LLM = Cohere(cohere_api_key=cohere_api_key , model="command-xlarge-nightly")
   
   prompt1 = PromptTemplate(
