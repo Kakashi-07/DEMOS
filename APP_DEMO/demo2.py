@@ -96,8 +96,8 @@ if "generated" not in st.session_state:
 if "past" not in st.session_state:
     st.session_state["past"] = []
    
-def generate_response(query):
-    resu = chat_chain({"query": query})
+#def generate_response(query):
+    #resu = chat_chain({"query": query})
 
 # Creating Containers
 response_container = tab1.container()
@@ -110,7 +110,7 @@ with container:
 
     if user_input and submit_button:
         if uploaded_file is not None:
-            output = generate_response(user_input)
+            output = chat_chain(user_input)
             print(output)
             st.session_state["past"].append(user_input)
             st.session_state["generated"].append(output)
